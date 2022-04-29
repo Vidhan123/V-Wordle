@@ -5,9 +5,11 @@ import { wordList } from './constants/data';
 
 const App = () => {
   const [boardData, setBoardData] = useState(JSON.parse(localStorage.getItem("board-data")));
-  const [message,setMessage] =useState(null);
+  const [message,setMessage] = useState(null);
   const [error, setError] = useState(false);    
   const [charArray, setCharArray] = useState([]);
+  const [level, setLevel] = useState(JSON.parse(localStorage.getItem("level")));
+  const [winsC, setWinsC] = useState(JSON.parse(localStorage.getItem("winsC")));
 
   const resetBoard = () => {
     let alphabetIndex = Math.floor(Math.random() * 26);
@@ -43,7 +45,32 @@ const App = () => {
       setBoardData(newBoardData);                      
       localStorage.setItem("board-data", JSON.stringify(newBoardData));
     }
+    const leve = JSON.parse(localStorage.getItem("level"));
+    const wins = JSON.parse(localStorage.getItem("winsC"));
+    if(leve) {
+      setLevel(leve);
+    }
+    else {
+      setLevel(0);
+    }
+    if(wins) {
+      setWinsC(wins);
+    }
+    else {
+      setWinsC(0);
+    }
   }, []);
+
+  useEffect(() => {
+    if(winsC === 5) {
+      setLevel((prev) => prev+1);
+    }
+  }, [winsC])
+
+  useEffect(() => {
+    localStorage.setItem("winsC", JSON.stringify(winsC));
+    localStorage.setItem("level", JSON.stringify(level));
+  }, [winsC, level])
 
   const handleMessage = (message) => {
     setMessage(message);
@@ -89,10 +116,12 @@ const App = () => {
       }
     }
     if(matchCount === 5){
+      setWinsC((prev) => prev+1);
       status="WIN";
       handleMessage("YOU WON")
     }
     else if(rowIndex+1 === 6){
+      setWinsC(0);
       status="LOST";
       handleMessage(boardData.solution)
     }
@@ -152,6 +181,7 @@ const App = () => {
           <div className='top'>
             <div className='title'>V-WORDLE</div>
             <button className="reset-board" onClick={resetBoard}>{"\u27f3"}</button>
+            <div className='level'>Level {level}</div>
           </div>
           {message && <div className='message'>
               {message}

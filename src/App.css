@@ -16,6 +16,10 @@
     font-size: 16px;
 }
 
+.level {
+  margin: 10px;
+}
+
 .title{
     letter-spacing: 0.2rem;
     font-size: 36px;
